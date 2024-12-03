@@ -1,0 +1,16 @@
+{
+"count_comparison": {
+        "source_query": "select count(*) from cost",
+        "target_query": "select count(*) from cost_dim"
+    },
+    "null_check": {
+        "target_query": "select count(*) from cost_dim where product_id is null or costpricetotal is null or sale_date is null"
+    },
+    "duplicate_check": {
+        "target_query": "select count(product_id) from cost_dim group by product_id having count(product_id)>1"
+    },
+    "column_mapping": {
+        "source_query": "  select product_id,round(costpricetotal) as costpricetotal,date_format(sale_date,'%d-%m-%y') sale_date from cost",
+        "target_query": "select product_id,costpricetotal,sale_date from cost_dim"
+    }
+}

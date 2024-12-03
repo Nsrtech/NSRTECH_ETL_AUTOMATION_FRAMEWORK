@@ -1,0 +1,16 @@
+{
+"count_comparison": {
+        "source_query": "select count(*) from\n (SELECT   p.Product_ID as ProductID ,  \n p.Product_Name as ProductName,  \n i.OpeningStock + i.PurchaseStockIn AS TotalStockAvailable,\n i.NumberOfUnitsSold AS NumberOfUnitsSold,\n (i.OpeningStock + i.PurchaseStockIn) - i.NumberOfUnitsSold  AS CurrentStock,\n i.Sale_Date  as sale_date  FROM     inventory i JOIN     product p \n ON i.Product_ID = p.Product_ID JOIN   cost c ON i.Product_ID = c.Product_ID AND i.Sale_Date = c.Sale_Date) a",
+        "target_query": "select count(*) from sales_fact"
+    },
+    "null_check": {
+        "target_query": "SELECT COUNT(*) FROM SALES_FACT\nWHERE  productid is null or\nproductname is null or \ntotalstockavailable is null or \nnumberofunitssold is null or \ncurrentstock is null or \nsale_date is null"
+    },
+    "duplicate_check": {
+        "target_query": "select count(*) from (\nSELECT PRODUCTID, \nCOUNT(productid) \nFROM SALES_FACT \nGROUP BY PRODUCTID HAVING COUNT(*) > 1)a"
+    },
+    "column_mapping": {
+        "source_query": "SELECT  p.Product_ID as productid \n ,  p.Product_Name as productname,\n i.OpeningStock + i.PurchaseStockIn AS totalstockavailable, \n i.NumberOfUnitsSold AS numberofunitssold, \n (i.OpeningStock + i.PurchaseStockIn) - i.NumberOfUnitsSold AS currentstock,\n DATE_FORMAT(i.sale_date, '%d-%m-%y') as sale_date \n FROM     inventory i JOIN    product p ON i.Product_ID = p.Product_ID \n JOIN cost c ON i.Product_ID = c.Product_ID AND i.Sale_Date = c.Sale_Date",
+        "target_query": "select  productid,productname,totalstockavailable,\nnumberofunitssold,currentstock,sale_date from sales_fact"
+    }
+}
